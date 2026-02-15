@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Match - LoveMatch 💕</title>
+<meta name="description" content="Discover birthday compatibility and personality insights!">
+<meta property="og:title" content="Birthday Match - LoveMatch 💕">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="hearts-bg"></div>
+<div id="nav"></div>
+<div class="container">
+  <div class="tool-section">
+    <h2 data-i18n="birthdayTitle">Birthday Match</h2>
+    <label data-i18n="yourBirthday">Your Birthday</label>
+    <input type="date" id="bd1">
+    <label data-i18n="partnerBirthday">Partner's Birthday</label>
+    <input type="date" id="bd2">
+    <button class="btn" onclick="analyzeBD()" data-i18n="analyzeBirthday">Analyze Match 🎂</button>
+    <div class="result" id="result"></div>
+  </div>
+  <div id="donate"></div>
+</div>
+<div id="footer"></div>
+<script src="i18n.js"></script>
+<script>
+document.getElementById('nav').innerHTML = navHTML('birthday');
+document.getElementById('donate').innerHTML = donateHTML();
+document.getElementById('footer').innerHTML = footerHTML();
+
+const zodiacRanges = [
+  [1,20,'Capricorn'],[2,19,'Aquarius'],[3,20,'Pisces'],[4,20,'Aries'],[5,21,'Taurus'],
+  [6,21,'Gemini'],[7,22,'Cancer'],[8,23,'Leo'],[9,23,'Virgo'],[10,23,'Libra'],
+  [11,22,'Scorpio'],[12,22,'Sagittarius'],[12,31,'Capricorn']
+];
+function getZodiac(m, d) {
+  // Simple zodiac from month/day
+  const dates = [[1,20,9],[2,19,10],[3,20,11],[4,20,0],[5,21,1],[6,21,2],[7,22,3],[8,23,4],[9,23,5],[10,23,6],[11,22,7],[12,22,8]];
+  for (const [mo,da,idx] of dates) {
+    if (m < mo || (m === mo && d <= da)) return idx;
+  }
+  return 9; // Capricorn
+}
+
+function analyzeBD() {
+  const d1 = document.getElementById('bd1').value;
+  const d2 = document.getElementById('bd2').value;
+  if (!d1 || !d2) return;
+
+  const date1 = new Date(d1), date2 = new Date(d2);
+  const m1 = date1.getMonth()+1, day1 = date1.getDate();
+  const m2 = date2.getMonth()+1, day2 = date2.getDate();
+  const z1 = getZodiac(m1, day1), z2 = getZodiac(m2, day2);
+  const signs = t('signs');
+
+  // Day difference in year
+  const doy1 = Math.floor((new Date(2000, m1-1, day1) - new Date(2000,0,1))/(86400000));
+  const doy2 = Math.floor((new Date(2000, m2-1, day2) - new Date(2000,0,1))/(86400000));
+  let dayDiff = Math.abs(doy1 - doy2);
+  if (dayDiff > 182) dayDiff = 365 - dayDiff;
+
+  // Score based on day difference + zodiac element compatibility
+  const elements = ['Fire','Earth','Air','Water'];
+  const elCompat = {'Fire+Fire':80,'Fire+Air':90,'Fire+Earth':60,'Fire+Water':55,
+    'Earth+Earth':85,'Earth+Air':65,'Earth+Water':92,'Air+Air':78,'Air+Water':62,'Water+Water':88};
+  const e1 = elements[z1 % 4], e2 = elements[z2 % 4];
+  // Actually use proper element mapping
+  const elMap = [0,1,2,3,0,1,2,3,0,1,2,3]; // Ari=Fire,Tau=Earth,Gem=Air,Can=Water...
+  const el1 = elements[elMap[z1]], el2 = elements[elMap[z2]];
+  const key1 = el1+'+'+el2, key2 = el2+'+'+el1;
+  const elScore = elCompat[key1] || elCompat[key2] || 70;
+
+  // Day diff score: 0 days apart = 70, 90 days = 95, 180 days = 75
+  const dayScore = dayDiff <= 90 ? 70 + (dayDiff/90)*25 : 95 - ((dayDiff-90)/90)*20;
+  const score = Math.round((elScore * 0.6 + dayScore * 0.4));
+
+  const ageDiff = Math.abs(date1.getFullYear() - date2.getFullYear());
+  const hearts = '💕'.repeat(Math.ceil(score/20));
+
+  const insights = {
+    en: [
+      `Your ${dayDiff}-day birthday gap creates a ${dayDiff < 60 ? 'familiar' : dayDiff < 120 ? 'complementary' : 'dynamic'} energy between you.`,
+      `${signs[z1]} meets ${signs[z2]} — ${el1} and ${el2} elements ${el1===el2?'resonate deeply':'create an interesting dynamic'}.`,
+      ageDiff > 0 ? `The ${ageDiff}-year age difference adds ${ageDiff <= 3 ? 'a peer-like understanding' : 'depth and perspective'} to your bond.` : `Being born in the same year gives you a shared generational wavelength.`
+    ],
+    zh: [
+      `你们${dayDiff}天的生日差距创造了${dayDiff < 60 ? '熟悉的' : dayDiff < 120 ? '互补的' : '动态的'}能量。`,
+      `${signs[z1]}遇见${signs[z2]}——${el1}和${el2}元素${el1===el2?'深深共鸣':'创造了有趣的互动'}。`,
+      ageDiff > 0 ? `${ageDiff}年的年龄差为你们的关系增添了${ageDiff <= 3 ? '同龄人般的理解' : '深度和视角'}。` : `同年出生让你们拥有共同的世代频率。`
+    ],
+    ja: [
+      `${dayDiff}日の誕生日の差が${dayDiff < 60 ? '親しみやすい' : dayDiff < 120 ? '補完的な' : 'ダイナミックな'}エネルギーを生みます。`,
+      `${signs[z1]}と${signs[z2]}の出会い——${el1}と${el2}の要素が${el1===el2?'深く共鳴':'面白い化学反応を起こ'}します。`,
+      ageDiff > 0 ? `${ageDiff}年の年の差が絆に${ageDiff <= 3 ? '同世代の理解' : '深みと視点'}を加えます。` : `同じ年に生まれたことで世代的な波長が合います。`
+    ],
+    ko: [
+      `${dayDiff}일의 생일 차이가 ${dayDiff < 60 ? '친숙한' : dayDiff < 120 ? '보완적인' : '역동적인'} 에너지를 만듭니다.`,
+      `${signs[z1]}이 ${signs[z2]}를 만남 — ${el1}과 ${el2} 원소가 ${el1===el2?'깊이 공명':'흥미로운 역학을 만듭'}니다.`,
+      ageDiff > 0 ? `${ageDiff}년의 나이 차이가 ${ageDiff <= 3 ? '동료 같은 이해' : '깊이와 관점'}을 더합니다.` : `같은 해에 태어나 세대적 파장을 공유합니다.`
+    ]
+  };
+  const ins = insights[currentLang] || insights.en;
+
+  const r = document.getElementById('result');
+  r.className = 'result show';
+  r.innerHTML = `
+    <h3>${signs[z1]} 🎂 ${signs[z2]}</h3>
+    <div class="score">${score}%</div>
+    <p>${hearts}</p>
+    ${ins.map(i => `<p class="detail">${i}</p>`).join('')}
+    <button class="copy-btn" onclick="copyResult('${signs[z1]} 🎂 ${signs[z2]}: ${score}% - LoveMatch 💕')" data-i18n="shareResult">${t('shareResult')}</button>
+    <button class="share-btn" onclick="shareToX('${signs[z1]} 🎂 ${signs[z2]}: ${score}%')" data-i18n="shareTwitter">${t('shareTwitter')}</button>
+  `;
+}
+</script>
+</body>
+</html>

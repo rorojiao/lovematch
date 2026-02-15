@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoveMatch 💕 - Love Compatibility Tests</title>
+<meta name="description" content="Discover your love compatibility with fun zodiac, name, birthday, and personality tests. Share results with friends!">
+<meta property="og:title" content="LoveMatch 💕 - Love Compatibility Tests">
+<meta property="og:description" content="Fun love compatibility tests - zodiac, name, birthday match & more!">
+<meta property="og:url" content="https://rorojiao.github.io/lovematch/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://rorojiao.github.io/lovematch/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://rorojiao.github.io/lovematch/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"LoveMatch","url":"https://rorojiao.github.io/lovematch/","description":"Love compatibility tests - zodiac, name, birthday match and more"}
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="hearts-bg"></div>
+<div id="nav"></div>
+
+<div class="hero">
+  <h1 data-i18n="heroTitle">Discover Your Love Compatibility 💕</h1>
+  <p data-i18n="heroSub">Fun, insightful tests to explore your romantic connections</p>
+</div>
+
+<div class="container">
+  <div class="cards">
+    <a href="zodiac-match.html" class="card">
+      <div class="card-icon">♈</div>
+      <h3 data-i18n="zodiacTitle">Zodiac Compatibility</h3>
+      <p data-i18n="zodiacDesc">See how the stars align for you and your partner.</p>
+    </a>
+    <a href="name-match.html" class="card">
+      <div class="card-icon">✍️</div>
+      <h3 data-i18n="nameTitle">Name Compatibility</h3>
+      <p data-i18n="nameDesc">Enter two names and discover your destiny score.</p>
+    </a>
+    <a href="birthday-match.html" class="card">
+      <div class="card-icon">🎂</div>
+      <h3 data-i18n="birthdayTitle">Birthday Match</h3>
+      <p data-i18n="birthdayDesc">Your birth dates reveal hidden compatibility.</p>
+    </a>
+    <a href="love-language.html" class="card">
+      <div class="card-icon">💬</div>
+      <h3 data-i18n="loveLangTitle">Love Language Quiz</h3>
+      <p data-i18n="loveLangDesc">Discover which love language speaks to your heart.</p>
+    </a>
+    <a href="soulmate.html" class="card">
+      <div class="card-icon">🔮</div>
+      <h3 data-i18n="soulmateTitle">Soulmate Portrait</h3>
+      <p data-i18n="soulmateDesc">We'll paint a picture of your ideal partner.</p>
+    </a>
+  </div>
+  <div id="donate"></div>
+</div>
+<div id="footer"></div>
+
+<script src="i18n.js"></script>
+<script>
+document.getElementById('nav').innerHTML = navHTML('home');
+document.getElementById('donate').innerHTML = donateHTML();
+document.getElementById('footer').innerHTML = footerHTML();
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Language Quiz - LoveMatch 💕</title>
+<meta name="description" content="Discover your love language - words, acts, gifts, time, or touch?">
+<meta property="og:title" content="Love Language Quiz - LoveMatch 💕">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="hearts-bg"></div>
+<div id="nav"></div>
+<div class="container">
+  <div class="tool-section">
+    <h2 data-i18n="loveLangTitle">Love Language Quiz</h2>
+    <div id="quizArea">
+      <p style="text-align:center;color:#777;margin:20px 0;" data-i18n="loveLangDesc">Discover which of the 5 love languages speaks to your heart.</p>
+      <button class="btn" onclick="startQuiz()" data-i18n="startQuiz">Start Quiz 💝</button>
+    </div>
+    <div class="result" id="result"></div>
+  </div>
+  <div id="donate"></div>
+</div>
+<div id="footer"></div>
+<script src="i18n.js"></script>
+<script>
+document.getElementById('nav').innerHTML = navHTML('loveLang');
+document.getElementById('donate').innerHTML = donateHTML();
+document.getElementById('footer').innerHTML = footerHTML();
+
+let qIdx = 0, scores = [0,0,0,0,0];
+
+function startQuiz() {
+  qIdx = 0; scores = [0,0,0,0,0];
+  showQuestion();
+}
+
+function showQuestion() {
+  const qs = t('quizQuestions');
+  if (qIdx >= qs.length) { showLLResult(); return; }
+  const q = qs[qIdx];
+  const area = document.getElementById('quizArea');
+  area.innerHTML = `
+    <div class="quiz-progress"><div class="quiz-progress-bar" style="width:${(qIdx/qs.length)*100}%"></div></div>
+    <h3 style="margin-bottom:16px;color:var(--pink2);">${q.q}</h3>
+    ${q.a.map((a,i) => `<button class="quiz-option" onclick="answer(${i})">${a}</button>`).join('')}
+  `;
+}
+
+function answer(i) {
+  scores[i]++;
+  qIdx++;
+  showQuestion();
+}
+
+function showLLResult() {
+  const maxIdx = scores.indexOf(Math.max(...scores));
+  const langs = t('loveLangs');
+  const descs = t('loveLangDesc5');
+  const emojis = ['💬','🤝','🎁','⏰','🤗'];
+  const pct = Math.round((scores[maxIdx] / t('quizQuestions').length) * 100);
+
+  // Bar chart
+  const total = scores.reduce((a,b)=>a+b,1);
+  const bars = scores.map((s,i) =>
+    `<div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+      <span style="width:28px">${emojis[i]}</span>
+      <span style="width:120px;font-size:0.85rem">${langs[i]}</span>
+      <div style="flex:1;background:#ffe0eb;border-radius:6px;height:20px;overflow:hidden;">
+        <div style="width:${(s/total)*100}%;background:var(--grad);height:100%;border-radius:6px;transition:width 0.5s;"></div>
+      </div>
+      <span style="width:30px;text-align:right;font-size:0.85rem">${s}</span>
+    </div>`
+  ).join('');
+
+  document.getElementById('quizArea').innerHTML = '';
+  const r = document.getElementById('result');
+  r.className = 'result show';
+  r.innerHTML = `
+    <h3>${t('yourLoveLang')}</h3>
+    <div class="score">${emojis[maxIdx]} ${langs[maxIdx]}</div>
+    <p class="detail">${descs[maxIdx]}</p>
+    <div style="margin:20px 0;text-align:left;">${bars}</div>
+    <button class="copy-btn" onclick="copyResult('${t('yourLoveLang')}: ${langs[maxIdx]} ${emojis[maxIdx]} - LoveMatch 💕')" data-i18n="shareResult">${t('shareResult')}</button>
+    <button class="share-btn" onclick="shareToX('${t('yourLoveLang')}: ${langs[maxIdx]} ${emojis[maxIdx]}')" data-i18n="shareTwitter">${t('shareTwitter')}</button>
+    <div style="margin-top:16px;"><button class="btn" onclick="startQuiz()" style="font-size:0.9rem;padding:10px 24px;">🔄 ${t('startQuiz')}</button></div>
+  `;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Name Compatibility - LoveMatch 💕</title>
+<meta name="description" content="Enter two names and calculate your love destiny score!">
+<meta property="og:title" content="Name Compatibility - LoveMatch 💕">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="hearts-bg"></div>
+<div id="nav"></div>
+<div class="container">
+  <div class="tool-section">
+    <h2 data-i18n="nameTitle">Name Compatibility</h2>
+    <label data-i18n="yourName">Your Name</label>
+    <input type="text" id="name1" data-i18n-placeholder="yourName">
+    <label data-i18n="partnerName">Partner's Name</label>
+    <input type="text" id="name2" data-i18n-placeholder="partnerName">
+    <button class="btn" onclick="calcName()" data-i18n="calcDestiny">Calculate Destiny 💫</button>
+    <div class="result" id="result"></div>
+  </div>
+  <div id="donate"></div>
+</div>
+<div id="footer"></div>
+<script src="i18n.js"></script>
+<script>
+document.getElementById('nav').innerHTML = navHTML('nameMatch');
+document.getElementById('donate').innerHTML = donateHTML();
+document.getElementById('footer').innerHTML = footerHTML();
+
+function calcName() {
+  const n1 = document.getElementById('name1').value.trim();
+  const n2 = document.getElementById('name2').value.trim();
+  if (!n1 || !n2) return;
+
+  // Deterministic hash from both names
+  const combined = (n1 + '💕' + n2).toLowerCase();
+  let hash = 0;
+  for (let i = 0; i < combined.length; i++) {
+    hash = ((hash << 5) - hash + combined.charCodeAt(i)) | 0;
+  }
+  const score = 40 + Math.abs(hash % 61); // 40-100
+
+  const levels = [
+    [95, '🔥💕 Soulmate Level!', '你们是灵魂伴侣级别！', '運命の赤い糸！', '소울메이트 수준!'],
+    [85, '💕💕 Amazing Chemistry!', '令人惊叹的化学反应！', '素晴らしいケミストリー！', '놀라운 케미스트리!'],
+    [70, '💗 Strong Connection!', '强烈的连接！', '強い絆！', '강한 연결!'],
+    [55, '💖 Good Potential!', '很有潜力！', '良い可能性！', '좋은 가능성!'],
+    [0,  '✨ Growing Bond', '缘分在成长中', '育つ絆', '성장하는 인연']
+  ];
+  const langIdx = {en:0,zh:1,ja:2,ko:3}[currentLang]||0;
+  const level = levels.find(l => score >= l[0]);
+  const label = level[1 + langIdx];
+
+  const msgs = {
+    en: [
+      `${n1} and ${n2} share a cosmic connection that transcends ordinary bonds.`,
+      `The letters in your names create a harmonious vibration together.`,
+      `There's a magnetic pull between ${n1} and ${n2} that's hard to ignore.`,
+      `Your names carry complementary energies — you complete each other.`
+    ],
+    zh: [`${n1}和${n2}拥有超越寻常的宇宙联系。`,`你们名字中的笔画创造了和谐的振动。`,`${n1}和${n2}之间有一种难以忽视的磁引力。`,`你们的名字携带互补的能量——你们互相成就。`],
+    ja: [`${n1}と${n2}は普通の絆を超えた宇宙的なつながりを持っています。`,`お二人の名前は一緒にハーモニーを奏でます。`,`${n1}と${n2}の間には無視できない引力があります。`,`お互いの名前は補完的なエネルギーを持っています。`],
+    ko: [`${n1}과 ${n2}는 평범한 인연을 초월하는 우주적 연결을 공유합니다.`,`두 사람의 이름이 조화로운 진동을 만듭니다.`,`${n1}과 ${n2} 사이에 무시할 수 없는 끌림이 있습니다.`,`두 이름은 서로를 완성하는 에너지를 가지고 있습니다.`]
+  };
+  const msgArr = msgs[currentLang] || msgs.en;
+  const msg = msgArr[Math.abs(hash) % msgArr.length];
+
+  const hearts = '💕'.repeat(Math.ceil(score/20));
+  const r = document.getElementById('result');
+  r.className = 'result show';
+  r.innerHTML = `
+    <h3>${n1} 💕 ${n2}</h3>
+    <div class="score">${score}%</div>
+    <p>${label}</p>
+    <p>${hearts}</p>
+    <p class="detail">${msg}</p>
+    <button class="copy-btn" onclick="copyResult('${n1} 💕 ${n2}: ${score}% ${t('destinyScore')} - LoveMatch 💕')" data-i18n="shareResult">${t('shareResult')}</button>
+    <button class="share-btn" onclick="shareToX('${n1} 💕 ${n2}: ${score}% ${label}')" data-i18n="shareTwitter">${t('shareTwitter')}</button>
+  `;
+}
+</script>
+</body>
+</html>

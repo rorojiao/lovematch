@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soulmate Portrait - LoveMatch 💕</title>
+<meta name="description" content="Answer questions to discover your ideal soulmate portrait!">
+<meta property="og:title" content="Soulmate Portrait - LoveMatch 💕">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="hearts-bg"></div>
+<div id="nav"></div>
+<div class="container">
+  <div class="tool-section">
+    <h2 data-i18n="soulmateTitle">Soulmate Portrait</h2>
+    <div id="quizArea">
+      <p style="text-align:center;color:#777;margin:20px 0;" data-i18n="soulmateDesc">Answer a few questions and we'll paint a picture of your ideal partner.</p>
+      <button class="btn" onclick="startSM()" data-i18n="generatePortrait">Generate Portrait ✨</button>
+    </div>
+    <div class="result" id="result"></div>
+  </div>
+  <div id="donate"></div>
+</div>
+<div id="footer"></div>
+<script src="i18n.js"></script>
+<script>
+document.getElementById('nav').innerHTML = navHTML('soulmate');
+document.getElementById('donate').innerHTML = donateHTML();
+document.getElementById('footer').innerHTML = footerHTML();
+
+let qIdx = 0, answers = [];
+
+function startSM() {
+  qIdx = 0; answers = [];
+  showSMQ();
+}
+
+function showSMQ() {
+  const qs = t('soulmateQs');
+  if (qIdx >= qs.length) { generatePortrait(); return; }
+  const q = qs[qIdx];
+  document.getElementById('quizArea').innerHTML = `
+    <div class="quiz-progress"><div class="quiz-progress-bar" style="width:${(qIdx/qs.length)*100}%"></div></div>
+    <h3 style="margin-bottom:16px;color:var(--pink2);">${q.q}</h3>
+    ${q.a.map((a,i) => `<button class="quiz-option" onclick="smAnswer(${i})">${a}</button>`).join('')}
+  `;
+}
+
+function smAnswer(i) {
+  answers.push(i);
+  qIdx++;
+  showSMQ();
+}
+
+function generatePortrait() {
+  const portraits = {
+    en: [
+      { traits: ["witty","adventurous","warm-hearted"], desc: "Your soulmate has a brilliant sense of humor that lights up every room. They're spontaneous and love trying new things, but beneath the fun exterior lies a deeply caring heart. Expect surprise dates, heartfelt letters, and a partner who makes every day feel like an adventure." },
+      { traits: ["intellectual","creative","empathetic"], desc: "Your ideal partner is a deep thinker with an artistic soul. They express love through meaningful conversations and creative gestures. They'll remember the little things, write you poetry, and always know the right words when you need comfort." },
+      { traits: ["reliable","nurturing","patient"], desc: "Your soulmate is your rock — steady, dependable, and endlessly supportive. They show love through actions: cooking your favorite meal, being there during tough times, and building a life of comfort and security together." },
+      { traits: ["passionate","mysterious","loyal"], desc: "Intense eyes, magnetic presence — your soulmate is someone who loves deeply and completely. They're fiercely loyal, emotionally intelligent, and will challenge you to grow. The connection will feel electric and transformative." },
+      { traits: ["free-spirited","optimistic","inspiring"], desc: "Your ideal partner is a breath of fresh air — independent, positive, and full of dreams. They'll inspire you to be your best self, take you on spontaneous road trips, and remind you that life is beautiful." }
+    ],
+    zh: [
+      { traits: ["风趣","爱冒险","热心"], desc: "你的灵魂伴侣有着出色的幽默感，能照亮每个房间。他们自发且热爱尝试新事物，但有趣的外表下藏着一颗深深关怀的心。期待惊喜约会、真挚的情书，以及一个让每一天都像冒险的伴侣。" },
+      { traits: ["有思想","有创意","善解人意"], desc: "你的理想伴侣是一个有着艺术灵魂的深度思考者。他们通过有意义的对话和创意表达爱。他们会记住小事，为你写诗，在你需要安慰时总能找到合适的话语。" },
+      { traits: ["可靠","体贴","有耐心"], desc: "你的灵魂伴侣是你的基石——稳定、可靠、无尽支持。他们通过行动表达爱：做你最爱的饭菜，在困难时刻陪伴你，一起建设舒适安全的生活。" },
+      { traits: ["热情","神秘","忠诚"], desc: "深邃的眼神，磁性的存在感——你的灵魂伴侣是一个深深地、完全地爱的人。他们极度忠诚，情商很高，会激励你成长。这种连接会让人感到电流般的变革力量。" },
+      { traits: ["自由","乐观","鼓舞人心"], desc: "你的理想伴侣如清风般自在——独立、积极、充满梦想。他们会激励你成为最好的自己，带你来一场说走就走的旅行，提醒你生活是美好的。" }
+    ],
+    ja: [
+      { traits: ["ウィット","冒険好き","温かい心"], desc: "あなたのソウルメイトは素晴らしいユーモアのセンスを持ち、どんな場所も明るくします。自発的で新しいことが大好きですが、楽しい外見の下に深い思いやりの心があります。サプライズデート、心のこもった手紙、毎日を冒険にしてくれるパートナーを期待してください。" },
+      { traits: ["知的","クリエイティブ","共感力がある"], desc: "理想のパートナーは芸術的な魂を持つ深い思考者です。意味のある会話と創造的なジェスチャーで愛を表現します。小さなことを覚えていて、詩を書いてくれ、慰めが必要な時にはいつも適切な言葉を知っています。" },
+      { traits: ["頼りになる","思いやりがある","忍耐強い"], desc: "あなたのソウルメイトはあなたの岩——安定していて、頼りになり、無限にサポートしてくれます。好きな料理を作る、辛い時にそばにいる、快適で安全な生活を一緒に築くという行動で愛を示します。" },
+      { traits: ["情熱的","ミステリアス","忠実"], desc: "深い目、磁力的な存在感——あなたのソウルメイトは深く完全に愛する人です。激しく忠実で、感情的に知的で、あなたの成長を促します。電気的で変革的なつながりを感じるでしょう。" },
+      { traits: ["自由奔放","楽観的","インスピレーション"], desc: "理想のパートナーは新鮮な風のよう——独立的で、前向きで、夢にあふれています。最高の自分になるようインスパイアし、突然のロードトリップに連れ出し、人生が美しいことを思い出させてくれます。" }
+    ],
+    ko: [
+      { traits: ["재치있는","모험적인","따뜻한"], desc: "당신의 소울메이트는 뛰어난 유머 감각으로 어디서든 분위기를 밝힙니다. 즉흥적이고 새로운 것을 좋아하지만, 재미있는 외면 아래에 깊은 배려심이 있습니다. 깜짝 데이트, 진심 어린 편지, 매일을 모험처럼 만드는 파트너를 기대하세요." },
+      { traits: ["지적인","창의적인","공감하는"], desc: "이상적인 파트너는 예술적 영혼을 가진 깊은 사색가입니다. 의미 있는 대화와 창의적인 표현으로 사랑을 전합니다. 작은 것을 기억하고, 시를 써주고, 위로가 필요할 때 항상 적절한 말을 알고 있습니다." },
+      { traits: ["든든한","세심한","인내심 있는"], desc: "당신의 소울메이트는 바위 같은 존재 — 안정적이고, 의지할 수 있고, 끝없이 지지합니다. 좋아하는 음식을 만들고, 힘든 시간에 곁에 있고, 편안하고 안전한 삶을 함께 만드는 행동으로 사랑을 보여줍니다." },
+      { traits: ["열정적인","신비로운","충실한"], desc: "깊은 눈빛, 자기적인 존재감 — 당신의 소울메이트는 깊고 완전하게 사랑하는 사람입니다. 극도로 충실하고, 감성 지능이 높으며, 당신의 성장을 자극합니다. 전기적이고 변화를 주는 연결을 느낄 것입니다." },
+      { traits: ["자유로운","낙관적인","영감을 주는"], desc: "이상적인 파트너는 상쾌한 바람 같은 존재 — 독립적이고, 긍정적이고, 꿈으로 가득합니다. 최고의 자신이 되도록 영감을 주고, 즉흥 여행에 데려가고, 인생이 아름답다는 것을 일깨워줍니다." }
+    ]
+  };
+
+  // Pick portrait based on answers
+  const idx = answers.reduce((a,b)=>a+b,0) % 5;
+  const lang = portraits[currentLang] || portraits.en;
+  const p = lang[idx];
+
+  document.getElementById('quizArea').innerHTML = '';
+  const r = document.getElementById('result');
+  r.className = 'result show';
+  r.innerHTML = `
+    <h3>🔮 ${t('soulmateResult')}</h3>
+    <div style="margin:16px 0;">
+      ${p.traits.map(t => `<span style="display:inline-block;background:var(--grad);color:#fff;padding:4px 14px;border-radius:20px;margin:4px;font-size:0.85rem;">✨ ${t}</span>`).join('')}
+    </div>
+    <p class="detail" style="font-size:1.05rem;line-height:1.8;">${p.desc}</p>
+    <button class="copy-btn" onclick="copyResult('🔮 ${t('soulmateResult')}: ${p.traits.join(', ')} - LoveMatch 💕')" data-i18n="shareResult">${t('shareResult')}</button>
+    <button class="share-btn" onclick="shareToX('🔮 My soulmate is: ${p.traits.join(', ')}')" data-i18n="shareTwitter">${t('shareTwitter')}</button>
+    <div style="margin-top:16px;"><button class="btn" onclick="startSM()" style="font-size:0.9rem;padding:10px 24px;">🔄 ${t('generatePortrait')}</button></div>
+  `;
+}
+</script>
+</body>
+</html>

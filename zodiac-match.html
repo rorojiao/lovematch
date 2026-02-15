@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zodiac Compatibility - LoveMatch 💕</title>
+<meta name="description" content="Check zodiac compatibility for all 144 sign combinations with detailed analysis.">
+<meta property="og:title" content="Zodiac Compatibility - LoveMatch 💕">
+<meta property="og:description" content="See how the stars align for you and your partner!">
+<meta property="og:url" content="https://rorojiao.github.io/lovematch/zodiac-match.html">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="hearts-bg"></div>
+<div id="nav"></div>
+<div class="container">
+  <div class="tool-section">
+    <h2 data-i18n="zodiacTitle">Zodiac Compatibility</h2>
+    <label data-i18n="yourSign">Your Sign</label>
+    <select id="sign1"></select>
+    <label data-i18n="partnerSign">Partner's Sign</label>
+    <select id="sign2"></select>
+    <button class="btn" onclick="checkZodiac()" data-i18n="checkCompat">Check Compatibility 💕</button>
+    <div class="result" id="result"></div>
+  </div>
+  <div id="donate"></div>
+</div>
+<div id="footer"></div>
+<script src="i18n.js"></script>
+<script>
+document.getElementById('nav').innerHTML = navHTML('zodiac');
+document.getElementById('donate').innerHTML = donateHTML();
+document.getElementById('footer').innerHTML = footerHTML();
+
+// Compatibility matrix (0-11 x 0-11), scores 0-100
+const compatMatrix = [
+// Ari Tau Gem Can Leo Vir Lib Sco Sag Cap Aqu Pis
+  [78, 62, 83, 47, 97, 63, 85, 50, 93, 52, 78, 67], // Aries
+  [62, 85, 58, 90, 72, 95, 75, 88, 55, 95, 60, 85], // Taurus
+  [83, 58, 76, 60, 88, 68, 93, 65, 82, 55, 95, 58], // Gemini
+  [47, 90, 60, 80, 55, 78, 50, 94, 45, 70, 52, 97], // Cancer
+  [97, 72, 88, 55, 82, 58, 90, 72, 95, 60, 80, 55], // Leo
+  [63, 95, 68, 78, 58, 75, 62, 82, 60, 92, 65, 72], // Virgo
+  [85, 75, 93, 50, 90, 62, 70, 78, 72, 58, 90, 65], // Libra
+  [50, 88, 65, 94, 72, 82, 78, 85, 58, 88, 55, 92], // Scorpio
+  [93, 55, 82, 45, 95, 60, 72, 58, 80, 52, 88, 60], // Sagittarius
+  [52, 95, 55, 70, 60, 92, 58, 88, 52, 82, 62, 72], // Capricorn
+  [78, 60, 95, 52, 80, 65, 90, 55, 88, 62, 75, 58], // Aquarius
+  [67, 85, 58, 97, 55, 72, 65, 92, 60, 72, 58, 88], // Pisces
+];
+
+const elementMap = {Fire:[0,4,8],Earth:[1,5,9],Air:[2,6,10],Water:[3,7,11]};
+function getElement(i){for(let[e,arr] of Object.entries(elementMap)) if(arr.includes(i)) return e;}
+
+const detailsEN = {
+  "Fire+Fire": "Two fire signs together create an explosive, passionate connection! You'll never be bored, but watch out for power struggles.",
+  "Fire+Air": "Air fans Fire's flames — this is an exciting, intellectually stimulating match with great chemistry.",
+  "Fire+Earth": "Fire's spontaneity meets Earth's stability. You balance each other, but need patience with different paces.",
+  "Fire+Water": "Steam! Passion meets emotion. Intense and transformative, but requires understanding of each other's needs.",
+  "Earth+Earth": "A rock-solid foundation of trust and reliability. You build something lasting, though spontaneity may be lacking.",
+  "Earth+Air": "Different wavelengths can be complementary. Earth grounds Air's ideas; Air inspires Earth to dream bigger.",
+  "Earth+Water": "A nurturing, natural pairing. Water nourishes Earth, and Earth provides the stability Water craves.",
+  "Air+Air": "Endless conversations and ideas! Mentally stimulating but may need to ground the relationship in practical matters.",
+  "Air+Water": "Emotional depth meets intellectual curiosity. Beautiful when balanced, but communication styles differ greatly.",
+  "Water+Water": "Deep emotional understanding and intuition connect you. Incredibly intimate, but watch for emotional overwhelm."
+};
+
+function getElementPair(i,j) {
+  const a = getElement(i), b = getElement(j);
+  const key1 = a+'+'+b, key2 = b+'+'+a;
+  return detailsEN[key1] || detailsEN[key2] || "A unique combination with its own special magic!";
+}
+
+function populateSigns() {
+  const signs = t('signs');
+  ['sign1','sign2'].forEach(id => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = `<option value="">${t('selectSign')}</option>` +
+      signs.map((s,i) => `<option value="${i}">${s}</option>`).join('');
+  });
+}
+
+function onLangChange() { populateSigns(); }
+populateSigns();
+
+function checkZodiac() {
+  const i = parseInt(document.getElementById('sign1').value);
+  const j = parseInt(document.getElementById('sign2').value);
+  if (isNaN(i) || isNaN(j)) return;
+  const score = compatMatrix[i][j];
+  const signs = t('signs');
+  const enSigns = T.en.signs;
+  const traits = t('zodiacData').traits;
+  const analysis = getElementPair(i, j);
+  const hearts = score >= 90 ? '💕💕💕💕💕' : score >= 75 ? '💕💕💕💕' : score >= 60 ? '💕💕💕' : score >= 40 ? '💕💕' : '💕';
+
+  const r = document.getElementById('result');
+  r.className = 'result show';
+  r.innerHTML = `
+    <h3>${signs[i]} × ${signs[j]}</h3>
+    <div class="score">${score}%</div>
+    <p>${hearts}</p>
+    <p class="detail"><strong>${signs[i]}:</strong> ${traits[enSigns[i]]}</p>
+    <p class="detail"><strong>${signs[j]}:</strong> ${traits[enSigns[j]]}</p>
+    <p class="detail">${analysis}</p>
+    <button class="copy-btn" onclick="copyResult('${signs[i]} × ${signs[j]}: ${score}% ${t('compatibility')} ${hearts} - LoveMatch 💕')" data-i18n="shareResult">${t('shareResult')}</button>
+    <button class="share-btn" onclick="shareToX('${signs[i]} × ${signs[j]}: ${score}% ${t('compatibility')} ${hearts}')" data-i18n="shareTwitter">${t('shareTwitter')}</button>
+  `;
+}
+</script>
+</body>
+</html>

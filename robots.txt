@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://rorojiao.github.io/lovematch/sitemap.xml
